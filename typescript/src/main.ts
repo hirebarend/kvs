@@ -24,6 +24,8 @@ const server = net.createServer(async (socket: net.Socket) => {
 
       const command: string = splittedStr[2];
 
+      // logger.info(`${command}: ${splittedStr[4]}`);
+
       if (command === 'SET') {
         dict[splittedStr[4]] = splittedStr[6];
 
@@ -35,8 +37,6 @@ const server = net.createServer(async (socket: net.Socket) => {
 
         return;
       }
-
-      // logger.info(`${command}: ${splittedStr[4]}`);
     } catch {}
   });
 });
