@@ -6,7 +6,7 @@ const logger = winston.createLogger({
   format: winston.format.json(),
   transports: [
     new winston.transports.Console({
-      level: 'error',
+      level: 'info',
     }),
   ],
 });
@@ -32,6 +32,8 @@ const server = net.createServer(async (socket: net.Socket) => {
 
       return;
     }
+
+    // logger.info(`${command}: ${splittedStr[4]}`);
   });
 });
 
@@ -41,19 +43,6 @@ logger.info(
   `listening on ${process.env.PORT ? parseInt(process.env.PORT) : 6379}`
 );
 
-import { createClient } from 'redis';
-
-async function test() {
-  const client = createClient();
-
-  await client.connect();
-
-  await client.set('hello', 'world');
-  const value = await client.get('hello');
-  console.log(value);
-  await client.disconnect();
-}
-
-setTimeout(() => {
-  test();
-}, 5000);
+// setInterval(() => {
+//   logger.info(`Object.keys(dict).length: ${Object.keys(dict).length}`);
+// }, 5000);

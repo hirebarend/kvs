@@ -1,7 +1,5 @@
 FROM node:latest
 
-EXPOSE 6379
-
 WORKDIR /usr/src/app
 
 COPY . .
