@@ -14,9 +14,13 @@ const logger = winston.createLogger({
 const dict: { [key: string]: string } = {};
 
 const server = net.createServer(async (socket: net.Socket) => {
-  socket.setNoDelay();
+  if (process.env.NO_DELAY) {
+    socket.setNoDelay();
+  }
 
-  socket.uncork();
+  if (process.env.UNCORK) {
+    socket.uncork();
+  }
 
   socket.on('data', (data: Buffer) => {
     try {
@@ -26,16 +30,16 @@ const server = net.createServer(async (socket: net.Socket) => {
 
       const command: string = splittedStr[2];
 
-      // logger.info(`${command}: ${splittedStr[4]}`);
-
       if (command === 'SET') {
-        dict[splittedStr[4]] = splittedStr[6];
+        // dict[splittedStr[4]] = splittedStr[6];
 
         socket.write('+OK\r\n');
 
         return;
       } else if (command === 'GET') {
-        socket.write(`+${dict[splittedStr[4]]}\r\n`);
+        // socket.write(`+${dict[splittedStr[4]]}\r\n`);
+
+        socket.write(`+${'2089e55f-5651-433e-9060-357f1459bcce'}\r\n`);
 
         return;
       }
@@ -49,6 +53,6 @@ logger.info(
   `listening on ${process.env.PORT ? parseInt(process.env.PORT) : 6379}`
 );
 
-// setInterval(() => {
-//   logger.info(`Object.keys(dict).length: ${Object.keys(dict).length}`);
-// }, 5000);
+logger.info(`NO_DELAY: ${process.env.NO_DELAY || 'false'}`);
+
+logger.info(`UNCORK: ${process.env.UNCORK || 'false'}`);
