@@ -23,7 +23,7 @@ async function set(
 }
 
 async function run_raw(n: number): Promise<void> {
-  const address: string = '20.87.121.24';
+  const address: string = '20.87.229.3';
   const port: number = 6379;
 
   const socket: net.Socket = new net.Socket();
@@ -65,7 +65,7 @@ async function run_raw(n: number): Promise<void> {
 
 async function run(n: number): Promise<void> {
   const client = createClient({
-    url: process.env.URL || 'redis://20.87.121.24:6379',
+    url: process.env.URL || 'redis://20.87.229.3:6379',
   });
 
   await client.connect();
