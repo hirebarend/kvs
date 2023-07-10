@@ -1,0 +1,38 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    workingDir: 'typescript'
+    verbose: false
+- task: Npm@1
+  displayName: 'npm run build'
+  inputs:
+    workingDir: 'typescript'
+    command: custom
+    verbose: false
+    customCommand: 'run build'
+- task: ArchiveFiles@2
+  displayName: 'Archive $(System.DefaultWorkingDirectory)/typescript'
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/typescript'
+    includeRootFolder: false
+    archiveFile: '$(Build.ArtifactStagingDirectory)/artifact.zip'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifact.zip'
+    ArtifactName: 'artifact'
+- task: Docker@2
+  displayName: buildAndPush
+  inputs:
+    Dockerfile: 'typescript/Dockerfile'
+    containerRegistry: 'Docker Hub (hirebarend)'
+    repository: hirebarend/kvs-typescript
+    tags: |
+     $(Build.BuildId)
+     latest
