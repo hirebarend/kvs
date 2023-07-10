@@ -14,26 +14,30 @@ const logger = winston.createLogger({
 const dict: { [key: string]: string } = {};
 
 const server = net.createServer(async (socket: net.Socket) => {
+  socket.setNoDelay();
+
   socket.on('data', (data: Buffer) => {
-    const str: string = data.toString();
+    try {
+      const str: string = data.toString();
 
-    const splittedStr = str.split('\r\n');
+      const splittedStr = str.split('\r\n');
 
-    const command: string = splittedStr[2];
+      const command: string = splittedStr[2];
 
-    if (command === 'SET') {
-      dict[splittedStr[4]] = splittedStr[6];
+      if (command === 'SET') {
+        dict[splittedStr[4]] = splittedStr[6];
 
-      socket.write('+OK\r\n');
+        socket.write('+OK\r\n');
 
-      return;
-    } else if (command === 'GET') {
-      socket.write(`+${dict[splittedStr[4]]}\r\n`);
+        return;
+      } else if (command === 'GET') {
+        socket.write(`+${dict[splittedStr[4]]}\r\n`);
 
-      return;
-    }
+        return;
+      }
 
-    // logger.info(`${command}: ${splittedStr[4]}`);
+      // logger.info(`${command}: ${splittedStr[4]}`);
+    } catch {}
   });
 });
 
