@@ -16,11 +16,13 @@ const dict: { [key: string]: string } = {};
 const server = net.createServer(async (socket: net.Socket) => {
   socket.setNoDelay();
 
+  socket.uncork();
+
   socket.on('data', (data: Buffer) => {
     try {
       const str: string = data.toString();
 
-      const splittedStr = str.split('\r\n');
+      const splittedStr: Array<string> = str.split('\r\n');
 
       const command: string = splittedStr[2];
 

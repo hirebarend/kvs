@@ -65,7 +65,7 @@ async function run_raw(n: number): Promise<void> {
 
 async function run(n: number): Promise<void> {
   const client = createClient({
-    url: process.env.URL || 'redis://20.87.229.3:6379',
+    url: process.env.URL || 'redis://127.0.0.1:6379',
   });
 
   await client.connect();
@@ -93,8 +93,8 @@ async function run(n: number): Promise<void> {
 
 (async () => {
   for (let i = 0; i < 10; i++) {
-    // await run(100_000);
-    await run_raw(100_000);
+    await run(100_000);
+    // await run_raw(100_000);
   }
 
   // await run(100_000);
