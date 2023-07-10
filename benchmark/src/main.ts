@@ -3,7 +3,7 @@ import * as uuid from 'uuid';
 
 async function run(n: number): Promise<void> {
   const client = createClient({
-    url: process.env.URL || 'redis://127.0.0.1:6379',
+    url: process.env.URL || 'redis://20.87.121.24:6379',
   });
 
   await client.connect();
