@@ -32,7 +32,7 @@ static async Task HandleTcpClientAsync(TcpClient tcpClient)
 
         while (true)
         {
-            if ((bytesRead = networkStream.Read(buffer, 0, buffer.Length)) != 0)
+            if ((bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
             {
                 string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 
@@ -40,7 +40,7 @@ static async Task HandleTcpClientAsync(TcpClient tcpClient)
 
                 byte[] responseData = Encoding.ASCII.GetBytes("+OK\r\n");
 
-                networkStream.Write(responseData, 0, responseData.Length);
+                await networkStream.WriteAsync(responseData, 0, responseData.Length);
             }
         }
     }
