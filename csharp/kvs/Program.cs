@@ -41,6 +41,8 @@ static async Task HandleTcpClientAsync(TcpClient tcpClient)
                 var bytes = Encoding.ASCII.GetBytes("+OK\r\n");
 
                 await networkStream.WriteAsync(bytes, 0, bytes.Length);
+
+                await networkStream.FlushAsync();
             }
         }
     }
