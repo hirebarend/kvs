@@ -17,10 +17,10 @@ async function run(n: number): Promise<void> {
     // const value: string = uuid.v4().substring(0, 7);
     const key: string = uuid.v4();
     const value: string = uuid.v4();
-
+    
     await client.set(key, value);
 
-    await client.get(key);
+    console.log(await client.get(key));
   }
 
   const timestamp2: number = new Date().getTime();

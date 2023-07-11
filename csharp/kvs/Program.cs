@@ -32,12 +32,10 @@ static async Task HandleTcpClientAsync(Socket socket)
 
             if (n == 0)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(50);
             }
 
-            var str = Encoding.ASCII.GetString(buffer, 0, n);
-
-            Console.WriteLine(str);
+            // var str = Encoding.ASCII.GetString(buffer, 0, n);
 
             var bytes = Encoding.ASCII.GetBytes("+OK\r\n");
 
