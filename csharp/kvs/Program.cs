@@ -5,13 +5,17 @@ using System.Text;
 
 Console.WriteLine("Running...");
 
-var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Any, 6379));
+int port = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")) ? 6379 : int.Parse(Environment.GetEnvironmentVariable("PORT"));
+
+var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
 
 tcpListener.Start();
 
 while (true)
 {
     var tcpClient = tcpListener.AcceptTcpClient();
+
+    Console.WriteLine("Connected");
 
     var networkStream = tcpClient.GetStream();
 
