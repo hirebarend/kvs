@@ -7,7 +7,7 @@ Console.WriteLine("Running...");
 
 int port = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")) ? 6379 : int.Parse(Environment.GetEnvironmentVariable("PORT"));
 
-var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
+var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Parse("0.0.0.0"), port));
 
 tcpListener.Start();
 
