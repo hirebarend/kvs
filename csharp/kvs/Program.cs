@@ -13,37 +13,35 @@ tcpListener.Start();
 
 while (true)
 {
-    var tcpClient = await tcpListener.AcceptTcpClientAsync();
+    var socket = await tcpListener.AcceptSocketAsync();
 
     Console.WriteLine("Connected");
 
-    _ = HandleTcpClientAsync(tcpClient);
+    _ = HandleTcpClientAsync(socket);
 }
 
-static async Task HandleTcpClientAsync(TcpClient tcpClient)
+static async Task HandleTcpClientAsync(Socket socket)
 {
     try
     {
-        var networkStream = tcpClient.GetStream();
-
-        var buffer = new byte[1024];
-
-        int n;
-
         while (true)
         {
-            if ((n = await networkStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+            if (socket.Available != 0)
             {
+                var buffer = new byte[1024];
+
+                var n = await socket.ReceiveAsync(buffer);
+
                 var str = Encoding.ASCII.GetString(buffer, 0, n);
 
                 Console.WriteLine(str);
 
                 var bytes = Encoding.ASCII.GetBytes("+OK\r\n");
 
-                await networkStream.WriteAsync(bytes, 0, bytes.Length);
-
-                await networkStream.FlushAsync();
+                await socket.SendAsync(bytes);
             }
+
+            Thread.Sleep(1000);
         }
     }
     catch (Exception ex)
