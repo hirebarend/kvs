@@ -10,17 +10,15 @@ async function run(n: number): Promise<void> {
 
   const timestamp1: number = new Date().getTime();
 
-  console.log('running');
-
   for (let i = 0; i < n; i++) {
     // const key: string = uuid.v4().substring(0, 7);
     // const value: string = uuid.v4().substring(0, 7);
     const key: string = uuid.v4();
     const value: string = uuid.v4();
-    
+
     await client.set(key, value);
 
-    console.log(await client.get(key));
+    await client.get(key);
   }
 
   const timestamp2: number = new Date().getTime();
