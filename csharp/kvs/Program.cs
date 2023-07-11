@@ -33,6 +33,8 @@ static async Task HandleTcpClientAsync(Socket socket)
             if (n == 0)
             {
                 Thread.Sleep(50);
+
+                continue;
             }
 
             // var str = Encoding.ASCII.GetString(buffer, 0, n);
