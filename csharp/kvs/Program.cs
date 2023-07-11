@@ -17,23 +17,38 @@ while (true)
 
     Console.WriteLine("Connected");
 
-    var networkStream = tcpClient.GetStream();
-
-    var buffer = new byte[1024];
-
-    int bytesRead;
-
-    while (true)
-    {
-        if ((bytesRead = networkStream.Read(buffer, 0, buffer.Length)) != 0) {
-            string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-
-            Console.WriteLine(dataReceived);
-
-            byte[] responseData = Encoding.ASCII.GetBytes("+OK\r\n");
-
-            networkStream.Write(responseData, 0, responseData.Length);
-        }
-    }
+    _ = HandleTcpClientAsync(tcpClient);
 }
 
+static async Task HandleTcpClientAsync(TcpClient tcpClient)
+{
+    try
+    {
+        var networkStream = tcpClient.GetStream();
+
+        var buffer = new byte[1024];
+
+        int bytesRead;
+
+        while (true)
+        {
+            if ((bytesRead = networkStream.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+
+                Console.WriteLine(dataReceived);
+
+                byte[] responseData = Encoding.ASCII.GetBytes("+OK\r\n");
+
+                networkStream.Write(responseData, 0, responseData.Length);
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error: " + ex.Message);
+    }
+    finally
+    {
+    }
+}
