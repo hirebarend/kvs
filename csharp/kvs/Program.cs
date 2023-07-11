@@ -26,22 +26,22 @@ static async Task HandleTcpClientAsync(Socket socket)
     {
         while (true)
         {
-            if (socket.Available != 0)
+            var buffer = new byte[1024];
+
+            var n = await socket.ReceiveAsync(buffer);
+
+            if (n == 0)
             {
-                var buffer = new byte[1024];
-
-                var n = await socket.ReceiveAsync(buffer);
-
-                var str = Encoding.ASCII.GetString(buffer, 0, n);
-
-                Console.WriteLine(str);
-
-                var bytes = Encoding.ASCII.GetBytes("+OK\r\n");
-
-                await socket.SendAsync(bytes);
+                Thread.Sleep(1000);
             }
 
-            Thread.Sleep(1000);
+            var str = Encoding.ASCII.GetString(buffer, 0, n);
+
+            Console.WriteLine(str);
+
+            var bytes = Encoding.ASCII.GetBytes("+OK\r\n");
+
+            await socket.SendAsync(bytes);
         }
     }
     catch (Exception ex)
