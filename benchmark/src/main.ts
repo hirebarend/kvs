@@ -36,9 +36,9 @@ async function run(n: number): Promise<void> {
 
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  // for (let i = 0; i < 10; i++) {
-  //   await run(100_000);
-  // }
+  for (let i = 0; i < 10; i++) {
+    await run(100_000);
+  }
 
-  await run(1000);
+  // await run(1000);
 })();

@@ -13,46 +13,64 @@ const logger = winston.createLogger({
 
 const dict: { [key: string]: string } = {};
 
-const server = net.createServer(async (socket: net.Socket) => {
-  if (process.env.NO_DELAY) {
-    socket.setNoDelay();
-  }
-
-  if (process.env.UNCORK) {
+const server = net.createServer(
+  {
+    noDelay: true,
+  },
+  async (socket: net.Socket) => {
     socket.uncork();
-  }
 
-  socket.on('data', (data: Buffer) => {
-    try {
-      const str: string = data.toString();
+    let n: number = 0;
+
+    const buffer: Buffer = Buffer.alloc(128);
+
+    socket.on('data', (data: Buffer) => {
+      for (let i = 0; i < data.length; i++) {
+        buffer.writeUInt8(data.readUInt8(i), n);
+
+        n++;
+      }
+
+      const str: string = data.subarray(0, n).toString();
 
       const splittedStr: Array<string> = str.split('\r\n');
 
-      const command: string = splittedStr[2];
+      const numberOfParameters: number = parseInt(splittedStr[0].substring(1));
 
-      if (command === 'SET') {
-        // dict[splittedStr[4]] = splittedStr[6];
-
-        socket.write('+OK\r\n');
-
-        return;
-      } else if (command === 'GET') {
-        // socket.write(`+${dict[splittedStr[4]]}\r\n`);
-
-        socket.write(`+${'2089e55f-5651-433e-9060-357f1459bcce'}\r\n`);
-
+      if (splittedStr.length < numberOfParameters * 2 + 2) {
         return;
       }
-    } catch {}
-  });
-});
 
-server.listen(process.env.PORT ? parseInt(process.env.PORT) : 6379);
+      n = 0;
 
-logger.info(
-  `listening on ${process.env.PORT ? parseInt(process.env.PORT) : 6379}`
+      try {
+        const command: string = splittedStr[2];
+
+        if (command === 'SET') {
+          dict[splittedStr[4]] = splittedStr[6];
+
+          socket.write('+OK\r\n');
+
+          return;
+        } else if (command === 'GET') {
+          socket.write(`+${dict[splittedStr[4]]}\r\n`);
+
+          return;
+        }
+      } catch {}
+    });
+  },
 );
 
-logger.info(`NO_DELAY: ${process.env.NO_DELAY || 'false'}`);
+server.on('listening', () => {
+  logger.info(
+    `listening on ${(server.address() as any).address}:${
+      (server.address() as any).port
+    }`,
+  );
+});
 
-logger.info(`UNCORK: ${process.env.UNCORK || 'false'}`);
+server.listen({
+  host: '0.0.0.0',
+  port: process.env.PORT ? parseInt(process.env.PORT) : 6379,
+});
