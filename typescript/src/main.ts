@@ -20,18 +20,22 @@ const server = net.createServer(
   async (socket: net.Socket) => {
     socket.uncork();
 
-    let n: number = 0;
+    // let n: number = 0;
 
-    const buffer: Buffer = Buffer.alloc(128);
+    // const buffer: Buffer = Buffer.alloc(128);
+
+    // const textDecoder: TextDecoder = new TextDecoder();
 
     socket.on('data', (data: Buffer) => {
-      for (let i = 0; i < data.length; i++) {
-        buffer.writeUInt8(data.readUInt8(i), n);
+      // for (let i = 0; i < data.length; i++) {
+      //   buffer.writeUInt8(data.readUInt8(i), n);
 
-        n++;
-      }
+      //   n++;
+      // }
 
-      const str: string = data.subarray(0, n).toString();
+      // const str: string = buffer.subarray(0, n).toString();
+
+      const str: string = data.toString();
 
       const splittedStr: Array<string> = str.split('\r\n');
 
@@ -41,7 +45,7 @@ const server = net.createServer(
         return;
       }
 
-      n = 0;
+      // n = 0;
 
       try {
         const command: string = splittedStr[2];
