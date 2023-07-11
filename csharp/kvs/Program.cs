@@ -3,6 +3,8 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 
+Console.WriteLine("Running...");
+
 var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Any, 6379));
 
 tcpListener.Start();
