@@ -10,6 +10,8 @@ async function run(n: number): Promise<void> {
 
   const timestamp1: number = new Date().getTime();
 
+  console.log('running');
+
   for (let i = 0; i < n; i++) {
     // const key: string = uuid.v4().substring(0, 7);
     // const value: string = uuid.v4().substring(0, 7);
@@ -40,5 +42,5 @@ async function run(n: number): Promise<void> {
   //   await run(100_000);
   // }
 
-  await run(100_000);
+  await run(1000);
 })();

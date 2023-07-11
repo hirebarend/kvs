@@ -19,7 +19,7 @@ while (true)
 
     int bytesRead;
 
-    while (tcpClient.Connected)
+    while (true)
     {
         if ((bytesRead = networkStream.Read(buffer, 0, buffer.Length)) != 0) {
             string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
