@@ -1,6 +1,8 @@
 import * as net from 'net';
 
 (async () => {
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   for (let i = 0; i < 10; i++) {
     await run();
   }
