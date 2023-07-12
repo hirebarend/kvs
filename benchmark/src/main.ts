@@ -12,8 +12,8 @@ function run() {
   return new Promise((resolve) => {
     const socket: net.Socket = new net.Socket();
 
-    socket.connect(1337, process.env.HOST || '20.87.234.215', () => {
-      console.log(process.env.HOST || '20.87.234.215');
+    socket.connect(1337, process.env.HOST || '127.0.0.1', () => {
+      console.log(process.env.HOST || '127.0.0.1');
 
       const timestamp1 = new Date().getTime();
 
@@ -22,12 +22,12 @@ function run() {
       socket.on('data', (data: Buffer) => {
         // console.log(data);
 
-        if (n >= 1_000) {
+        if (n >= 1_0_000) {
           const timestamp2 = new Date().getTime();
 
           console.log(timestamp2 - timestamp1);
           console.log((timestamp2 - timestamp1) / 1000);
-          console.log(1_000 / ((timestamp2 - timestamp1) / 1000));
+          console.log(1_0_000 / ((timestamp2 - timestamp1) / 1000));
           console.log('-----------------------------------------');
 
           socket.destroy();

@@ -12,59 +12,37 @@ var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Parse("0.0.0.0"), por
 
 tcpListener.Start();
 
-var sockets = new List<Socket>();
-
 while (true)
 {
-    if (tcpListener.Pending())
-    {
-        var socket = tcpListener.AcceptSocket();
+    var socket = await tcpListener.AcceptSocketAsync();
 
-        socket.ReceiveTimeout = 50;
+    Console.WriteLine("Connected");
 
-        sockets.Add(socket);
-
-        Console.WriteLine("Connected");
-    }
-
-    HandleSockets(sockets);
+    _ = HandleSocket(socket);
 }
 
-static void HandleSockets(List<Socket> sockets)
-{
-    foreach (var socket in sockets)
-    {
-       var result = HandleSocket(socket);
-    }
-}
 
-static bool HandleSocket(Socket socket)
+async static Task HandleSocket(Socket socket)
 {
-    try
+    while (true)
     {
         if (!socket.IsConnected())
         {
-            return false;
+            return;
         }
 
         var buffer = new byte[4];
 
-        var n = socket.Receive(buffer);
+        var n = await socket.ReceiveAsync(buffer);
 
         if (n == 0)
         {
-            return true;
+            return;
         }
 
         var bytes = Encoding.ASCII.GetBytes("PONG");
 
-        socket.SendAsync(bytes);
+        await socket.SendAsync(bytes);
     }
-    catch (Exception ex)
-    {
-
-    }
-
-    return true;
 }
 
