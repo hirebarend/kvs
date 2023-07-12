@@ -6,7 +6,7 @@ namespace kvs
     {
         public static bool IsConnected(this Socket socket)
         {
-            bool part1 = socket.Poll(1000, SelectMode.SelectRead);
+            bool part1 = socket.Poll(50, SelectMode.SelectRead);
 
             bool part2 = (socket.Available == 0);
 
