@@ -10,7 +10,7 @@ resource containerInstanceContainerGroup1 'Microsoft.ContainerInstance/container
       {
         name: name
         properties: {
-          image: 'hirebarend/kvs-typescript:latest'
+          image: 'hirebarend/kvs-csharp:latest'
           ports: [
             {
               port: 1337
