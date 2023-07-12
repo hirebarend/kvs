@@ -5,26 +5,53 @@ export class SocketWrapper {
 
   protected error: Error | null = null;
 
-  protected readCallbacks: Array<(buffer: Buffer) => void> = [];
+  protected waitForDataCallbacks: Array<() => void> = [];
+
+  protected socketOnCloseListener: any = null;
 
   protected socketOnDataListener: any = null;
 
   protected socketOnErrorListener: any = null;
 
-  constructor(public socket: net.Socket) {
-    this.socketOnErrorListener = async (error: Error) => {
-      this.error = error;
-    };
-
-    this.socket.on('error', this.socketOnErrorListener);
-  }
+  constructor(
+    public socket: net.Socket,
+    public connected: boolean = false,
+  ) {}
 
   public addListeners(): SocketWrapper {
+    this.socketOnCloseListener = async () => {
+      for (const waitForDataCallback of this.waitForDataCallbacks) {
+        waitForDataCallback();
+      }
+
+      this.waitForDataCallbacks = [];
+    };
+
+    this.socket.on('close', this.socketOnCloseListener);
+
     this.socketOnDataListener = async (data: Buffer) => {
       this.buffer = this.buffer ? Buffer.concat([this.buffer, data]) : data;
+
+      for (const waitForDataCallback of this.waitForDataCallbacks) {
+        waitForDataCallback();
+      }
+
+      this.waitForDataCallbacks = [];
     };
 
     this.socket.on('data', this.socketOnDataListener);
+
+    this.socketOnErrorListener = async (error: Error) => {
+      this.error = error;
+
+      for (const waitForDataCallback of this.waitForDataCallbacks) {
+        waitForDataCallback();
+      }
+
+      this.waitForDataCallbacks = [];
+    };
+
+    this.socket.on('error', this.socketOnErrorListener);
 
     this.buffer = Buffer.from([]);
 
@@ -44,22 +71,42 @@ export class SocketWrapper {
       this.socket.connect(port, address, async () => {
         this.socket.removeListener('error', socketOnErrorListener);
 
+        this.connected = true;
+
         resolve();
       });
     });
   }
 
   public destroy(): void {
+    for (const waitForDataCallback of this.waitForDataCallbacks) {
+      waitForDataCallback();
+    }
+
+    this.waitForDataCallbacks = [];
+
     this.removeListeners();
 
     this.socket.destroy();
   }
 
   public removeListeners(): SocketWrapper {
+    if (this.socketOnCloseListener) {
+      this.socket.removeListener('close', this.socketOnCloseListener);
+
+      this.socketOnCloseListener = null;
+    }
+
     if (this.socketOnDataListener) {
       this.socket.removeListener('data', this.socketOnDataListener);
 
       this.socketOnDataListener = null;
+    }
+
+    if (this.socketOnErrorListener) {
+      this.socket.removeListener('error', this.socketOnErrorListener);
+
+      this.socketOnErrorListener = null;
     }
 
     this.buffer = null;
@@ -67,12 +114,12 @@ export class SocketWrapper {
     return this;
   }
 
-  public async read(n: number): Promise<Buffer> {
+  public async read(n: number): Promise<Buffer | null> {
     if (this.error) {
       throw this.error;
     }
 
-    if (this.socket.destroyed) {
+    if (this.socket.destroyed || !this.connected) {
       throw new Error('socket has been destroyed');
     }
 
@@ -80,27 +127,55 @@ export class SocketWrapper {
       throw new Error();
     }
 
-    if (this.buffer.length === 0) {
-      await this.sleep();
-
-      return await this.read(n);
+    if (this.buffer.length === 0 || this.buffer.length < n) {
+      return null;
     }
 
     const subarray: Buffer = this.buffer.subarray(0, n);
-
-    if (subarray.length < n) {
-      await this.sleep();
-
-      return await this.read(n);
-    }
 
     this.buffer = this.buffer.subarray(n);
 
     return subarray;
   }
 
-  protected sleep(): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, 5));
+  public async waitForData(n: number): Promise<void> {
+    if (!this.buffer) {
+      throw new Error();
+    }
+
+    if (this.buffer.length >= n) {
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const fn = () => {
+        if (this.error) {
+          reject(this.error);
+
+          return;
+        }
+
+        if (this.socket.destroyed || !this.connected) {
+          reject(new Error('socket has been destroyed'));
+
+          return;
+        }
+
+        if (!this.buffer) {
+          reject(new Error());
+
+          return;
+        }
+
+        if (this.buffer.length >= n) {
+          resolve();
+
+          return;
+        }
+      };
+
+      this.waitForDataCallbacks.push(fn);
+    });
   }
 
   public async write(buffer: Buffer): Promise<void> {
@@ -111,7 +186,7 @@ export class SocketWrapper {
         return;
       }
 
-      if (this.socket.destroyed) {
+      if (this.socket.destroyed || !this.connected) {
         reject(new Error('socket has been destroyed'));
 
         return;

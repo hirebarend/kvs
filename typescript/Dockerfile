@@ -1,6 +1,6 @@
 FROM node:latest
 
-EXPOSE 6379
+EXPOSE 1337
 
 WORKDIR /usr/src/app
 

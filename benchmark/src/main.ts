@@ -1,28 +1,42 @@
 import * as net from 'net';
 
 (async () => {
-  const socket: net.Socket = new net.Socket();
+  for (let i = 0; i < 10; i++) {
+    await run();
+  }
+})();
 
-  socket.connect(1337, process.env.HOST || '127.0.0.1', () => {
-    const timestamp1 = new Date().getTime();
+function run() {
+  return new Promise((resolve) => {
+    const socket: net.Socket = new net.Socket();
 
-    let n = 0;
+    socket.connect(1337, process.env.HOST || '127.0.0.1', () => {
+      const timestamp1 = new Date().getTime();
 
-    socket.on('data', (data: Buffer) => {
-      if (n >= 1_000) {
-        const timestamp2 = new Date().getTime();
+      let n = 0;
 
-        console.log(timestamp2 - timestamp1);
-        console.log((timestamp2 - timestamp1) / 1000);
+      socket.on('data', (data: Buffer) => {
+        if (n >= 1_000_000) {
+          const timestamp2 = new Date().getTime();
 
-        return;
-      }
+          console.log(timestamp2 - timestamp1);
+          console.log((timestamp2 - timestamp1) / 1000);
+          console.log(1_000_000 / ((timestamp2 - timestamp1) / 1000));
+          console.log('-----------------------------------------');
+
+          socket.destroy();
+
+          resolve(null);
+
+          return;
+        }
+
+        socket.write('PING');
+
+        n++;
+      });
 
       socket.write('PING');
-
-      n++;
     });
-
-    socket.write('PING');
   });
-})();
+}

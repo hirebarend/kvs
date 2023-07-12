@@ -13,7 +13,7 @@ resource containerInstanceContainerGroup1 'Microsoft.ContainerInstance/container
           image: 'hirebarend/kvs-typescript:latest'
           ports: [
             {
-              port: 6379
+              port: 1337
               protocol: 'TCP'
             }
           ]
@@ -42,7 +42,7 @@ resource containerInstanceContainerGroup1 'Microsoft.ContainerInstance/container
       type: 'Public'
       ports: [
         {
-          port: 6379
+          port: 1337
           protocol: 'TCP'
         }
       ]
@@ -61,7 +61,7 @@ resource containerInstanceContainerGroup1Benchmark 'Microsoft.ContainerInstance/
           image: 'hirebarend/kvs-benchmark:latest'
           ports: [
             {
-              port: 8080
+              port: 1337
               protocol: 'TCP'
             }
           ]
@@ -73,8 +73,8 @@ resource containerInstanceContainerGroup1Benchmark 'Microsoft.ContainerInstance/
           }
           environmentVariables: [
             {
-              name: 'URL'
-              value: 'redis://${containerInstanceContainerGroup1.properties.ipAddress.ip}:6379'
+              name: 'HOST'
+              value: containerInstanceContainerGroup1.properties.ipAddress.ip
             }
           ]
         }
@@ -86,7 +86,7 @@ resource containerInstanceContainerGroup1Benchmark 'Microsoft.ContainerInstance/
       type: 'Public'
       ports: [
         {
-          port: 8080
+          port: 1337
           protocol: 'TCP'
         }
       ]

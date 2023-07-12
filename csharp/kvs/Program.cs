@@ -2,53 +2,69 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using kvs;
 
 Console.WriteLine("Running...");
 
-int port = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")) ? 6379 : int.Parse(Environment.GetEnvironmentVariable("PORT"));
+int port = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")) ? 1337 : int.Parse(Environment.GetEnvironmentVariable("PORT"));
 
 var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Parse("0.0.0.0"), port));
 
 tcpListener.Start();
 
+var sockets = new List<Socket>();
+
 while (true)
 {
-    var socket = await tcpListener.AcceptSocketAsync();
+    if (tcpListener.Pending())
+    {
+        var socket = tcpListener.AcceptSocket();
 
-    Console.WriteLine("Connected");
+        socket.ReceiveTimeout = 50;
 
-    _ = HandleTcpClientAsync(socket);
+        sockets.Add(socket);
+
+        Console.WriteLine("Connected");
+    }
+
+    HandleSockets(sockets);
 }
 
-static async Task HandleTcpClientAsync(Socket socket)
+static void HandleSockets(List<Socket> sockets)
+{
+    foreach (var socket in sockets)
+    {
+       var result = HandleSocket(socket);
+    }
+}
+
+static bool HandleSocket(Socket socket)
 {
     try
     {
-        while (true)
+        if (!socket.IsConnected())
         {
-            var buffer = new byte[1024];
-
-            var n = await socket.ReceiveAsync(buffer);
-
-            if (n == 0)
-            {
-                Thread.Sleep(50);
-
-                continue;
-            }
-
-            // var str = Encoding.ASCII.GetString(buffer, 0, n);
-
-            var bytes = Encoding.ASCII.GetBytes("+OK\r\n");
-
-            await socket.SendAsync(bytes);
+            return false;
         }
+
+        var buffer = new byte[4];
+
+        var n = socket.Receive(buffer);
+
+        if (n == 0)
+        {
+            return true;
+        }
+
+        var bytes = Encoding.ASCII.GetBytes("PONG");
+
+        socket.SendAsync(bytes);
     }
     catch (Exception ex)
     {
-        Console.WriteLine("Error: " + ex.Message);
+
     }
-    finally
-    {
-    }
+
+    return true;
 }
+
