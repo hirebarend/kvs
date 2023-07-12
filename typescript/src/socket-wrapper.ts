@@ -5,6 +5,8 @@ export class SocketWrapper {
 
   protected error: Error | null = null;
 
+  protected readCallbacks: Array<(buffer: Buffer) => void> = [];
+
   protected socketOnDataListener: any = null;
 
   protected socketOnErrorListener: any = null;

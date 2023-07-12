@@ -19,19 +19,19 @@ const server = net.createServer(
   async (socket: net.Socket) => {
     socket.uncork();
 
-    socket.on('data', (data: Buffer) => {
-      socket.write('PONG');
-    });
+    // socket.on('data', (data: Buffer) => {
+    //   socket.write('PONG');
+    // });
 
-    // const socketWrapper: SocketWrapper = new SocketWrapper(socket);
+    const socketWrapper: SocketWrapper = new SocketWrapper(socket);
 
-    // socketWrapper.addListeners();
+    socketWrapper.addListeners();
 
-    // while (true) {
-    //   await socketWrapper.read(4);
+    while (true) {
+      await socketWrapper.read(4);
 
-    //   await socketWrapper.write(Buffer.from('PONG'));
-    // }
+      await socketWrapper.write(Buffer.from('PONG'));
+    }
   },
 );
 
