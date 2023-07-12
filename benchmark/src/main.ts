@@ -16,12 +16,12 @@ function run() {
       let n = 0;
 
       socket.on('data', (data: Buffer) => {
-        if (n >= 1_000_000) {
+        if (n >= 1_00_000) {
           const timestamp2 = new Date().getTime();
 
           console.log(timestamp2 - timestamp1);
           console.log((timestamp2 - timestamp1) / 1000);
-          console.log(1_000_000 / ((timestamp2 - timestamp1) / 1000));
+          console.log(1_00_000 / ((timestamp2 - timestamp1) / 1000));
           console.log('-----------------------------------------');
 
           socket.destroy();
