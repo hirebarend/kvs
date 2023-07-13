@@ -12,6 +12,32 @@ const logger = winston.createLogger({
   ],
 });
 
+async function read(socketWrapper: SocketWrapper): Promise<string> {
+  await socketWrapper.waitForData(1);
+
+  const buffer1: Buffer | null = await socketWrapper.read(1);
+
+  if (!buffer1) {
+    throw new Error();
+  }
+
+  const n: number | null = buffer1.at(0) || null;
+
+  if (!n) {
+    throw new Error();
+  }
+
+  const buffer2: Buffer | null = await socketWrapper.read(n);
+
+  if (!buffer2) {
+    throw new Error();
+  }
+
+  return buffer2.toString();
+}
+
+const dict: { [key: string]: string } = {};
+
 const server = net.createServer(
   {
     noDelay: true,
@@ -25,11 +51,13 @@ const server = net.createServer(
 
     while (socketWrapper.connected) {
       try {
-        await socketWrapper.waitForData(4);
+        const key: string = await read(socketWrapper);
 
-        await socketWrapper.read(4);
+        const value: string = await read(socketWrapper);
 
-        await socketWrapper.write(Buffer.from('PONG'));
+        dict[key] = value;
+
+        await socketWrapper.write(Buffer.from('OK'));
       } catch {}
     }
 

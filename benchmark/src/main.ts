@@ -1,4 +1,5 @@
 import * as net from 'net';
+import { SocketWrapper } from './socket-wrapper';
 
 (async () => {
   await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -8,41 +9,42 @@ import * as net from 'net';
   }
 })();
 
-function run() {
-  return new Promise((resolve) => {
-    const socket: net.Socket = new net.Socket();
+async function run() {
+  const socket: net.Socket = new net.Socket();
 
-    socket.connect(1337, process.env.HOST || '127.0.0.1', () => {
-      console.log(process.env.HOST || '127.0.0.1');
+  const socketWrapper: SocketWrapper = new SocketWrapper(socket);
 
-      const timestamp1 = new Date().getTime();
+  await socketWrapper.connect(1337, process.env.HOST || '127.0.0.1');
 
-      let n = 0;
+  await socketWrapper.addListeners();
 
-      socket.on('data', (data: Buffer) => {
-        // console.log(data);
+  console.log(process.env.HOST || '127.0.0.1');
 
-        if (n >= 1_0_000) {
-          const timestamp2 = new Date().getTime();
+  const timestamp1 = new Date().getTime();
 
-          console.log(timestamp2 - timestamp1);
-          console.log((timestamp2 - timestamp1) / 1000);
-          console.log(1_0_000 / ((timestamp2 - timestamp1) / 1000));
-          console.log('-----------------------------------------');
+  for (let i = 0; i < 1_00_000; i++) {
+    const key: string = `key_${i}`;
+    const value: string = 'world';
 
-          socket.destroy();
+    const buffer: Buffer = Buffer.concat([
+      new Uint8Array([key.length]),
+      Buffer.from(key),
+      new Uint8Array([value.length]),
+      Buffer.from(value),
+    ]);
 
-          resolve(null);
+    await socketWrapper.write(buffer);
 
-          return;
-        }
+    await socketWrapper.waitForData(2);
+    await socketWrapper.read(2);
+  }
 
-        socket.write('PING');
+  const timestamp2 = new Date().getTime();
 
-        n++;
-      });
+  console.log(timestamp2 - timestamp1);
+  console.log((timestamp2 - timestamp1) / 1000);
+  console.log(1_00_000 / ((timestamp2 - timestamp1) / 1000));
+  console.log('-----------------------------------------');
 
-      socket.write('PING');
-    });
-  });
+  socket.destroy();
 }
