@@ -9,7 +9,7 @@
     "lint": "prettier --write --config prettier.config.js --list-different src/**/*.ts",
     "start": "npm run build && node dist/main.js",
     "debug": "npm run build && node --inspect dist/main.js",
-    "test": "npm run build && mocha dist/**/*.test.js"
+    "test": "npm run build && node dist/test.js"
   },
   "repository": {
     "type": "git",
