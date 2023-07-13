@@ -36,6 +36,15 @@ async function read(socketWrapper: SocketWrapper): Promise<string> {
   return buffer2.toString();
 }
 
+async function buildBuffer(value: string): Promise<Buffer> {
+  const buffer: Buffer = Buffer.concat([
+    new Uint8Array([value.length]),
+    Buffer.from(value),
+  ]);
+
+  return buffer;
+}
+
 const dict: { [key: string]: string } = {};
 
 const server = net.createServer(
@@ -51,13 +60,37 @@ const server = net.createServer(
 
     while (socketWrapper.connected) {
       try {
-        const key: string = await read(socketWrapper);
+        await socketWrapper.waitForData(3);
 
-        const value: string = await read(socketWrapper);
+        const command: string | undefined = (
+          await socketWrapper.read(3)
+        )?.toString();
 
-        dict[key] = value;
+        if (!command) {
+          throw new Error();
+        }
 
-        await socketWrapper.write(Buffer.from('OK'));
+        if (command === 'GET') {
+          const key: string = await read(socketWrapper);
+
+          const value: string = dict[key];
+
+          await socketWrapper.write(await buildBuffer(value));
+
+          continue;
+        }
+
+        if (command === 'SET') {
+          const key: string = await read(socketWrapper);
+
+          const value: string = await read(socketWrapper);
+
+          dict[key] = value;
+
+          await socketWrapper.write(await buildBuffer('OK'));
+
+          continue;
+        }
       } catch {}
     }
 

@@ -1,4 +1,5 @@
 import * as net from 'net';
+import * as uuid from 'uuid';
 import { SocketWrapper } from './socket-wrapper';
 
 (async () => {
@@ -8,6 +9,60 @@ import { SocketWrapper } from './socket-wrapper';
     await run();
   }
 })();
+
+async function read(socketWrapper: SocketWrapper): Promise<string> {
+  await socketWrapper.waitForData(1);
+
+  const buffer1: Buffer | null = await socketWrapper.read(1);
+
+  if (!buffer1) {
+    throw new Error();
+  }
+
+  const n: number | null = buffer1.at(0) || null;
+
+  if (!n) {
+    throw new Error();
+  }
+
+  const buffer2: Buffer | null = await socketWrapper.read(n);
+
+  if (!buffer2) {
+    throw new Error();
+  }
+
+  return buffer2.toString();
+}
+
+async function get(socketWrapper: SocketWrapper, key: string): Promise<string> {
+  const buffer: Buffer = Buffer.concat([
+    Buffer.from('GET'),
+    new Uint8Array([key.length]),
+    Buffer.from(key),
+  ]);
+
+  await socketWrapper.write(buffer);
+
+  return await read(socketWrapper);
+}
+
+async function set(
+  socketWrapper: SocketWrapper,
+  key: string,
+  value: string,
+): Promise<void> {
+  const buffer: Buffer = Buffer.concat([
+    Buffer.from('SET'),
+    new Uint8Array([key.length]),
+    Buffer.from(key),
+    new Uint8Array([value.length]),
+    Buffer.from(value),
+  ]);
+
+  await socketWrapper.write(buffer);
+
+  await read(socketWrapper);
+}
 
 async function run() {
   const socket: net.Socket = new net.Socket();
@@ -23,20 +78,12 @@ async function run() {
   const timestamp1 = new Date().getTime();
 
   for (let i = 0; i < 1_00_000; i++) {
-    const key: string = `key_${i}`;
-    const value: string = 'world';
+    const key: string = uuid.v4();
+    const value: string = uuid.v4();
 
-    const buffer: Buffer = Buffer.concat([
-      new Uint8Array([key.length]),
-      Buffer.from(key),
-      new Uint8Array([value.length]),
-      Buffer.from(value),
-    ]);
+    await set(socketWrapper, key, value);
 
-    await socketWrapper.write(buffer);
-
-    await socketWrapper.waitForData(2);
-    await socketWrapper.read(2);
+    await get(socketWrapper, key);
   }
 
   const timestamp2 = new Date().getTime();
