@@ -66,15 +66,12 @@ async function set(
 
 async function run() {
   console.log(process.env.HOST || process.argv[1] || '127.0.0.1');
-  
+
   const socket: net.Socket = new net.Socket();
 
   const socketWrapper: SocketWrapper = new SocketWrapper(socket);
 
-  await socketWrapper.connect(
-    1337,
-    process.env.HOST || process.argv[1] || '127.0.0.1',
-  );
+  await socketWrapper.connect(1337, '161.35.171.176');
 
   await socketWrapper.addListeners();
 
