@@ -69,11 +69,14 @@ async function run() {
 
   const socketWrapper: SocketWrapper = new SocketWrapper(socket);
 
-  await socketWrapper.connect(1337, process.env.HOST || '127.0.0.1');
+  await socketWrapper.connect(
+    1337,
+    process.env.HOST || process.argv[1] || '127.0.0.1',
+  );
 
   await socketWrapper.addListeners();
 
-  console.log(process.env.HOST || '127.0.0.1');
+  console.log(process.env.HOST || process.argv[1] || '127.0.0.1');
 
   const timestamp1 = new Date().getTime();
 
