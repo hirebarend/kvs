@@ -75,7 +75,7 @@ const server = net.createServer(
 
           const value: string = dict[key];
 
-          await socketWrapper.write(await buildBuffer(value));
+          await socketWrapper.write(await buildBuffer(value || 'NULL'));
 
           continue;
         }

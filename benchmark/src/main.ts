@@ -1,13 +1,41 @@
 import * as net from 'net';
+import * as os from 'os';
+import { average } from 'simple-statistics';
 import * as uuid from 'uuid';
+import * as winston from 'winston';
 import { SocketWrapper } from './socket-wrapper';
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console({
+      level: 'info',
+    }),
+    new winston.transports.File({ filename: 'log.log', level: 'info' }),
+  ],
+});
+
+logger.info(`os: ${os.platform()}`);
+logger.info(`arch: ${os.arch()}`);
+logger.info(`cpu: ${os.cpus()[0].model} @ ${os.cpus()[0].speed / 1000}GHz`);
 
 (async () => {
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
+  const results = [];
+
+  const n: number = 1_00_000;
+
   for (let i = 0; i < 10; i++) {
-    await run();
+    results.push(await run(n));
   }
+
+  logger.info(
+    `took ${average(results)}ms for ${n} executions (${
+      (average(results) * 1000) / n
+    }ns/op)`,
+  );
 })();
 
 async function read(socketWrapper: SocketWrapper): Promise<string> {
@@ -64,36 +92,47 @@ async function set(
   await read(socketWrapper);
 }
 
-async function run() {
-  console.log(process.env.HOST || process.argv[1] || '127.0.0.1');
+async function run(n: number): Promise<number> {
+  console.log(process.env.HOST || process.argv[2] || '127.0.0.1');
 
   const socket: net.Socket = new net.Socket();
 
   const socketWrapper: SocketWrapper = new SocketWrapper(socket);
 
-  await socketWrapper.connect(1337, '161.35.171.176');
+  await socketWrapper.connect(
+    1337,
+    process.env.HOST || process.argv[2] || '127.0.0.1',
+  );
 
   await socketWrapper.addListeners();
 
-  console.log(process.env.HOST || process.argv[1] || '127.0.0.1');
+  const arr = [];
+
+  for (let i = 0; i < n; i++) {
+    arr.push([uuid.v4(), uuid.v4()]);
+  }
 
   const timestamp1 = new Date().getTime();
 
-  for (let i = 0; i < 1_00_000; i++) {
-    const key: string = uuid.v4();
-    const value: string = uuid.v4();
+  for (let i = 0; i < n; i++) {
+    const key: string = arr[i][0];
 
-    await set(socketWrapper, key, value);
+    await set(socketWrapper, key, arr[i][1]);
 
     await get(socketWrapper, key);
   }
 
   const timestamp2 = new Date().getTime();
 
-  console.log(timestamp2 - timestamp1);
-  console.log((timestamp2 - timestamp1) / 1000);
-  console.log(1_00_000 / ((timestamp2 - timestamp1) / 1000));
-  console.log('-----------------------------------------');
+  const milliseconds = timestamp2 - timestamp1;
 
-  socket.destroy();
+  logger.info(
+    `took ${milliseconds}ms for ${n} executions (${
+      (milliseconds * 1000) / n
+    }ns/op)`,
+  );
+
+  socketWrapper.destroy();
+
+  return timestamp2 - timestamp1;
 }
