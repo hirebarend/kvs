@@ -1,6 +1,5 @@
 import * as net from 'net';
 import * as os from 'os';
-import { average } from 'simple-statistics';
 import * as uuid from 'uuid';
 import * as winston from 'winston';
 import { SocketWrapper } from './socket-wrapper';

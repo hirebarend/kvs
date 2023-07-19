@@ -31,16 +31,7 @@ async static Task HandleSocket(Socket socket, Dictionary<string, string> diction
             return;
         }
 
-        var buffer = new byte[3];
-
-        var n = await socket.ReceiveAsync(buffer, cancellationToken: new CancellationTokenSource(1000).Token);
-
-        if (n == 0)
-        {
-            continue;
-        }
-
-        var command = Encoding.ASCII.GetString(buffer);
+        var command = await Read(socket);
 
         if (command == "GET")
         {

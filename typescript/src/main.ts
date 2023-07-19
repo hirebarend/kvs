@@ -69,11 +69,7 @@ const server = net.createServer(
 
     while (socketWrapper.connected) {
       try {
-        await socketWrapper.waitForData(3);
-
-        const command: string | undefined = (
-          await socketWrapper.read(3)
-        )?.toString();
+        const command: string | undefined = await read(socketWrapper);
 
         if (!command) {
           throw new Error();
