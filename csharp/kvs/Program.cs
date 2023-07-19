@@ -3,11 +3,10 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using kvs;
-using System;
-
-Console.WriteLine("Running...");
 
 int port = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")) ? 1337 : int.Parse(Environment.GetEnvironmentVariable("PORT"));
+
+Console.WriteLine($"listening on 0.0.0.0:{port}");
 
 var tcpListener = new TcpListener(new IPEndPoint(IPAddress.Parse("0.0.0.0"), port));
 
@@ -18,8 +17,6 @@ var dictionary = new Dictionary<string, string>();
 while (true)
 {
     var socket = await tcpListener.AcceptSocketAsync();
-
-    Console.WriteLine("Connected");
 
     _ = HandleSocket(socket, dictionary);
 }
@@ -49,7 +46,7 @@ async static Task HandleSocket(Socket socket, Dictionary<string, string> diction
         {
             var key = await Read(socket);
 
-            var value = dictionary.ContainsKey(key) ? dictionary[key] : null;
+            var value = dictionary.ContainsKey(key) ? dictionary[key] : "NULL";
 
             var bytes = new byte[1] { (byte)value.Length }.Concat(Encoding.ASCII.GetBytes(value)).ToArray();
 

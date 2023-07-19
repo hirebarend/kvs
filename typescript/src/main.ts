@@ -36,13 +36,22 @@ async function read(socketWrapper: SocketWrapper): Promise<string> {
   return buffer2.toString();
 }
 
-async function buildBuffer(value: string): Promise<Buffer> {
-  const buffer: Buffer = Buffer.concat([
-    new Uint8Array([value.length]),
-    Buffer.from(value),
-  ]);
+async function write(
+  socketWrapper: SocketWrapper,
+  values: Array<string>,
+): Promise<void> {
+  const buffer: Buffer = Buffer.concat(
+    values.reduce(
+      (array, value) => {
+        array.push(new Uint8Array([value.length]));
+        array.push(Buffer.from(value));
+        return array;
+      },
+      [] as Array<Buffer | Uint8Array>,
+    ),
+  );
 
-  return buffer;
+  await socketWrapper.write(buffer);
 }
 
 const dict: { [key: string]: string } = {};
@@ -75,7 +84,7 @@ const server = net.createServer(
 
           const value: string = dict[key];
 
-          await socketWrapper.write(await buildBuffer(value || 'NULL'));
+          await write(socketWrapper, [value || 'NULL']);
 
           continue;
         }
@@ -87,7 +96,7 @@ const server = net.createServer(
 
           dict[key] = value;
 
-          await socketWrapper.write(await buildBuffer('OK'));
+          await write(socketWrapper, ['OK']);
 
           continue;
         }

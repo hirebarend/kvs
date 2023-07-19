@@ -62,14 +62,26 @@ async function read(socketWrapper: SocketWrapper): Promise<string> {
   return buffer2.toString();
 }
 
-async function get(socketWrapper: SocketWrapper, key: string): Promise<string> {
-  const buffer: Buffer = Buffer.concat([
-    Buffer.from('GET'),
-    new Uint8Array([key.length]),
-    Buffer.from(key),
-  ]);
+async function write(
+  socketWrapper: SocketWrapper,
+  values: Array<string>,
+): Promise<void> {
+  const buffer: Buffer = Buffer.concat(
+    values.reduce(
+      (array, value) => {
+        array.push(new Uint8Array([value.length]));
+        array.push(Buffer.from(value));
+        return array;
+      },
+      [] as Array<Buffer | Uint8Array>,
+    ),
+  );
 
   await socketWrapper.write(buffer);
+}
+
+async function get(socketWrapper: SocketWrapper, key: string): Promise<string> {
+  await write(socketWrapper, ['GET', key]);
 
   return await read(socketWrapper);
 }
@@ -79,15 +91,7 @@ async function set(
   key: string,
   value: string,
 ): Promise<void> {
-  const buffer: Buffer = Buffer.concat([
-    Buffer.from('SET'),
-    new Uint8Array([key.length]),
-    Buffer.from(key),
-    new Uint8Array([value.length]),
-    Buffer.from(value),
-  ]);
-
-  await socketWrapper.write(buffer);
+  await write(socketWrapper, ['SET', key, value]);
 
   await read(socketWrapper);
 }
