@@ -23,19 +23,9 @@ logger.info(`cpu: ${os.cpus()[0].model} @ ${os.cpus()[0].speed / 1000}GHz`);
 (async () => {
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  const results = [];
-
-  const n: number = 1_0_000;
-
-  for (let i = 0; i < 10; i++) {
-    results.push(await run(n));
+  for (let i = 5; i < 11; i++) {
+    await run(Math.pow(3, i));
   }
-
-  logger.info(
-    `took ${average(results)}ms for ${n} executions (${
-      (average(results) * 1000) / n
-    }ns/op)`,
-  );
 })();
 
 async function read(socketWrapper: SocketWrapper): Promise<string> {
