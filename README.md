@@ -1,6 +1,6 @@
 # kvs
 
-This repository contains a custom Key-Value Store implemented in both C# and JavaScript, along with a benchmarking tool to compare their performance. The purpose of this project is to evaluate and compare the efficiency and scalability of the two implementations.
+This repository contains a Key-Value Store implemented in both C# and TypeScript, along with a benchmarking tool to compare their performance. The purpose of this project is to evaluate and compare the efficiency and scalability of the two implementations.
 
 ## Benchmarks (TCP)
 
@@ -8,7 +8,7 @@ This repository contains a custom Key-Value Store implemented in both C# and Jav
 
 OS: `linux`
 
-Arch: `x64`
+Architecture: `x64`
 
 CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
@@ -21,11 +21,11 @@ CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 | GET/SET | 19683           | 7061 ms  | 358 ns/op   |
 | GET/SET | 59049           | 20251 ms | 342 ns/op   |
 
-### Node.js
+### TypeScript
 
 OS: `linux`
 
-Arch: `x64`
+Architecture: `x64`
 
 CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
@@ -37,6 +37,35 @@ CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 | GET/SET | 6561            | 2469 ms  | 376 ns/op   |
 | GET/SET | 19683           | 6380 ms  | 324 ns/op   |
 | GET/SET | 59049           | 18546 ms | 314 ns/op   |
+
+## Benchmarks (HTTP)
+
+### TypeScript
+
+OS: `linux`
+
+Architecture: `x64`
+
+CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
+
+| COMMAND | # OF EXECUTIONS | DURATION  |             |
+|---------|-----------------|-----------|-------------|
+| GET/SET | 243             | 769 ms    | 3164 ns/op  |
+| GET/SET | 729             | 2022 ms   | 2773 ns/op  |
+| GET/SET | 2187            | 4988 ms   | 2280 ns/op  |
+| GET/SET | 6561            | 14729 ms  | 2244 ns/op  |
+| GET/SET | 19683           | 41245 ms  | 2095 ns/op  |
+| GET/SET | 59049           | 123964 ms | 2099 ns/op  |
+
+## Conclusion
+
+This project aimed to compare the performance of a Key-Value Store implemented in C# and TypeScript. The benchmarking results revealed that the choice of language, C# or TypeScript, had minimal impact on the overall performance. Instead, the protocol and implementation specifics played a more significant role.
+
+The C# implementation achieved an average of 342 nanoseconds per operation, while the JavaScript implementation achieved an average of 314 nanoseconds per operation. These results demonstrate that both languages are capable of providing efficient and comparable performance when using a minimalistic protocol over TCP.
+
+Interestingly, when the TypeScript implementation switched to a traditional HTTP protocol over TCP, the average time per operation increased significantly to 2099 nanoseconds. This highlights the impact of protocol choice on performance. The minimalistic TCP protocol, designed specifically for this project, outperformed the traditional HTTP protocol in terms of efficiency.
+
+In summary, this project emphasizes that the performance of a key-value store implementation is influenced more by the protocol and implementation specifics than the choice of programming language. By developing a custom, minimalistic TCP protocol, both the C# and TypeScript implementations achieved similar levels of performance.
 
 ## Contributions
 
@@ -50,4 +79,4 @@ This project is licensed under the MIT License. Feel free to use, modify, and di
 
 For any questions, suggestions, or feedback, please contact Barend Erasmus at hirebarend@gmail.com.
 
-Thank you for your interest in this project! We hope it proves useful in evaluating and comparing the performance of C# and JavaScript implementations.
+Thank you for your interest in this project! We hope it proves useful in evaluating and comparing the performance of C# and TypeScript implementations.
