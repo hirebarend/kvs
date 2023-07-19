@@ -8,6 +8,7 @@
     "build": "tsc",
     "lint": "prettier --write --config prettier.config.js --list-different src/**/*.ts",
     "start": "npm run build && node dist/main.js",
+    "start-http": "npm run build && node dist/main-http.js",
     "debug": "npm run build && node --inspect dist/main.js",
     "test": "npm run build && mocha dist/**/*.test.js"
   },
@@ -29,6 +30,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "simple-statistics": "^7.8.3",
     "uuid": "^9.0.0",
     "winston": "^3.10.0"
