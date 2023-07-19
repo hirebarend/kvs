@@ -25,7 +25,7 @@ logger.info(`cpu: ${os.cpus()[0].model} @ ${os.cpus()[0].speed / 1000}GHz`);
 
   const results = [];
 
-  const n: number = 1_00_000;
+  const n: number = 1_0_000;
 
   for (let i = 0; i < 10; i++) {
     results.push(await run(n));
