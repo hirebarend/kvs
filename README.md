@@ -1,6 +1,6 @@
 # kvs
 
-This repository contains a Key-Value Store implemented in C#, Go and TypeScript, along with a benchmarking tool to compare their performance. The purpose of this project is to evaluate and compare the efficiency and scalability of the two implementations.
+This repository contains a Key-Value Store implemented in C#, Go and TypeScript, along with a benchmarking tool to compare their performance. The purpose of this project is to evaluate and compare the efficiency and scalability of the implementations.
 
 ## Benchmarks (TCP)
 
@@ -12,14 +12,14 @@ Architecture: `x64`
 
 CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
-| COMMAND | # OF EXECUTIONS | DURATION |             |
-|---------|-----------------|----------|-------------|
-| GET/SET | 243             | 147 ms   | 604 ns/op   |
-| GET/SET | 729             | 348 ms   | 477 ns/op   |
-| GET/SET | 2187            | 829 ms   | 379 ns/op   |
-| GET/SET | 6561            | 2313 ms  | 352 ns/op   |
-| GET/SET | 19683           | 7061 ms  | 358 ns/op   |
-| GET/SET | 59049           | 20251 ms | 342 ns/op   |
+| COMMAND | # OF EXECUTIONS | DURATION |           |
+| ------- | --------------- | -------- | --------- |
+| SET/GET | 243             | 147 ms   | 604 ns/op |
+| SET/GET | 729             | 348 ms   | 477 ns/op |
+| SET/GET | 2187            | 829 ms   | 379 ns/op |
+| SET/GET | 6561            | 2313 ms  | 352 ns/op |
+| SET/GET | 19683           | 7061 ms  | 358 ns/op |
+| SET/GET | 59049           | 20251 ms | 342 ns/op |
 
 ### Go
 
@@ -29,14 +29,14 @@ Architecture: `x64`
 
 CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
-| COMMAND | # OF EXECUTIONS | DURATION |             |
-|---------|-----------------|----------|-------------|
-| GET/SET | 243             | 133 ms   | 547 ns/op   |
-| GET/SET | 729             | 379 ms   | 519 ns/op   |
-| GET/SET | 2187            | 954 ms   | 436 ns/op   |
-| GET/SET | 6561            | 2740 ms  | 417 ns/op   |
-| GET/SET | 19683           | 9067 ms  | 460 ns/op   |
-| GET/SET | 59049           | 26561 ms | 449 ns/op   |
+| COMMAND | # OF EXECUTIONS | DURATION |           |
+| ------- | --------------- | -------- | --------- |
+| SET/GET | 243             | 133 ms   | 547 ns/op |
+| SET/GET | 729             | 379 ms   | 519 ns/op |
+| SET/GET | 2187            | 954 ms   | 436 ns/op |
+| SET/GET | 6561            | 2740 ms  | 417 ns/op |
+| SET/GET | 19683           | 9067 ms  | 460 ns/op |
+| SET/GET | 59049           | 26561 ms | 449 ns/op |
 
 ### TypeScript
 
@@ -46,14 +46,14 @@ Architecture: `x64`
 
 CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
-| COMMAND | # OF EXECUTIONS | DURATION |             |
-|---------|-----------------|----------|-------------|
-| GET/SET | 243             | 143 ms   | 584 ns/op   |
-| GET/SET | 729             | 402 ms   | 551 ns/op   |
-| GET/SET | 2187            | 840 ms   | 384 ns/op   |
-| GET/SET | 6561            | 2469 ms  | 376 ns/op   |
-| GET/SET | 19683           | 6380 ms  | 324 ns/op   |
-| GET/SET | 59049           | 18546 ms | 314 ns/op   |
+| COMMAND | # OF EXECUTIONS | DURATION |           |
+| ------- | --------------- | -------- | --------- |
+| SET/GET | 243             | 143 ms   | 584 ns/op |
+| SET/GET | 729             | 402 ms   | 551 ns/op |
+| SET/GET | 2187            | 840 ms   | 384 ns/op |
+| SET/GET | 6561            | 2469 ms  | 376 ns/op |
+| SET/GET | 19683           | 6380 ms  | 324 ns/op |
+| SET/GET | 59049           | 18546 ms | 314 ns/op |
 
 ## Benchmarks (HTTP)
 
@@ -65,14 +65,14 @@ Architecture: `x64`
 
 CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
-| COMMAND | # OF EXECUTIONS | DURATION  |             |
-|---------|-----------------|-----------|-------------|
-| GET/SET | 243             | 769 ms    | 3164 ns/op  |
-| GET/SET | 729             | 2022 ms   | 2773 ns/op  |
-| GET/SET | 2187            | 4988 ms   | 2280 ns/op  |
-| GET/SET | 6561            | 14729 ms  | 2244 ns/op  |
-| GET/SET | 19683           | 41245 ms  | 2095 ns/op  |
-| GET/SET | 59049           | 123964 ms | 2099 ns/op  |
+| COMMAND | # OF EXECUTIONS | DURATION  |            |
+| ------- | --------------- | --------- | ---------- |
+| SET/GET | 243             | 769 ms    | 3164 ns/op |
+| SET/GET | 729             | 2022 ms   | 2773 ns/op |
+| SET/GET | 2187            | 4988 ms   | 2280 ns/op |
+| SET/GET | 6561            | 14729 ms  | 2244 ns/op |
+| SET/GET | 19683           | 41245 ms  | 2095 ns/op |
+| SET/GET | 59049           | 123964 ms | 2099 ns/op |
 
 ## Conclusion
 
@@ -96,4 +96,4 @@ This project is licensed under the MIT License. Feel free to use, modify, and di
 
 For any questions, suggestions, or feedback, please contact Barend Erasmus at hirebarend@gmail.com.
 
-Thank you for your interest in this project! We hope it proves useful in evaluating and comparing the performance of C# and TypeScript implementations.
+Thank you for your interest in this project! We hope it proves useful in evaluating and comparing the performance of C#, Go and TypeScript implementations.
