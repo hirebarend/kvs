@@ -34,51 +34,57 @@ func main() {
 			os.Exit(1)
 		}
 
-		go handle(conn, dict)
+		go handle(&conn, &dict)
 	}
 }
 
-func handle(conn net.Conn, dict map[string]string) {
+func handle(conn *net.Conn, dict *map[string]string) {
 	buffer := make([]byte, 1024)
 
 	for {
-		n, err := conn.Read(buffer)
+		n, err := (*conn).Read(buffer)
 
 		if err != nil {
 			break
 		}
 
-		arr := read(buffer[:n])
+		bufferSlice := buffer[:n]
+
+		arr := read(&bufferSlice)
 
 		if arr[0] == "GET" {
-			conn.Write(bytesToWrite([]string{dict[arr[1]]}))
+			result := []string{(*dict)[arr[1]]}
+
+			(*conn).Write(bytesToWrite(&result))
 
 			continue
 		}
 
 		if arr[0] == "SET" {
-			dict[arr[1]] = arr[2]
+			(*dict)[arr[1]] = arr[2]
 
-			conn.Write(bytesToWrite([]string{"OK"}))
+			result := []string{"OK"}
+
+			(*conn).Write(bytesToWrite(&result))
 
 			continue
 		}
 	}
 
-	conn.Close()
+	(*conn).Close()
 }
 
-func read(buffer []byte) []string {
+func read(buffer *[]byte) []string {
 	result := make([]string, 3)
 
 	index := 0
 
 	bufferIndex := 0
 
-	for bufferIndex < len(buffer) {
-		n := buffer[bufferIndex]
+	for bufferIndex < len(*buffer) {
+		n := (*buffer)[bufferIndex]
 
-		bytes := buffer[bufferIndex+1 : bufferIndex+1+int(n)]
+		bytes := (*buffer)[bufferIndex+1 : bufferIndex+1+int(n)]
 
 		bufferIndex = bufferIndex + 1 + int(n)
 
@@ -92,10 +98,10 @@ func read(buffer []byte) []string {
 	return result
 }
 
-func bytesToWrite(arr []string) []byte {
+func bytesToWrite(arr *[]string) []byte {
 	var bytes []byte = nil
 
-	for _, element := range arr {
+	for _, element := range *arr {
 		if bytes == nil {
 			bytes = append([]byte{byte(len(element))}, []byte(element)...)
 		} else {
