@@ -31,12 +31,12 @@ CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
 | COMMAND | # OF EXECUTIONS | DURATION |           |
 | ------- | --------------- | -------- | --------- |
-| SET/GET | 243             | 133 ms   | 547 ns/op |
-| SET/GET | 729             | 379 ms   | 519 ns/op |
-| SET/GET | 2187            | 954 ms   | 436 ns/op |
-| SET/GET | 6561            | 2740 ms  | 417 ns/op |
-| SET/GET | 19683           | 9067 ms  | 460 ns/op |
-| SET/GET | 59049           | 26561 ms | 449 ns/op |
+| SET/GET | 243             | 99 ms    | 407 ns/op |
+| SET/GET | 729             | 294 ms   | 403 ns/op |
+| SET/GET | 2187            | 729 ms   | 333 ns/op |
+| SET/GET | 6561            | 2024 ms  | 308 ns/op |
+| SET/GET | 19683           | 6327 ms  | 321 ns/op |
+| SET/GET | 59049           | 18417 ms | 311 ns/op |
 
 ### TypeScript
 
