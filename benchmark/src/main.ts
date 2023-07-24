@@ -99,7 +99,7 @@ async function run(n: number): Promise<number> {
 
   await socketWrapper.addListeners();
 
-  const arr = [];
+  const arr: Array<[string, string]> = [];
 
   for (let i = 0; i < n; i++) {
     arr.push([uuid.v4(), uuid.v4()]);
