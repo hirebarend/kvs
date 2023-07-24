@@ -25,7 +25,7 @@ curl -sL https://deb.nodesource.com/setup_20.x -o /tmp/nodesource_setup.sh
 sudo bash /tmp/nodesource_setup.sh
 sudo apt -y install nodejs
 # sudo dpkg -i --force-overwrite /var/cache/apt/archives/nodejs_20.5.0-deb-1nodesource1_amd64.deb
-sudo apt -y install npm
+# sudo apt -y install npm
 
 npm install -g pm2
 

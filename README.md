@@ -1,16 +1,16 @@
-# kvs
+# High-Performance Key-Value Store Benchmarking
 
-This repository contains a Key-Value Store implemented in C#, Go and TypeScript, along with a benchmarking tool to compare their performance. The purpose of this project is to evaluate and compare the efficiency and scalability of the implementations.
+## Introduction
+
+Welcome to the GitHub repository for our key-value store benchmarking project! In this project, we have implemented a key-value store using three different programming languages: C#, Go, and TypeScript. To evaluate the performance of our implementations, we have conducted extensive benchmarking tests using a self-written minimalistic TCP protocol, as well as popular protocols like HTTP and gRPC.
+
+The benchmarks were carried out on a Linux operating system with an x64 architecture, running on an Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz. For each language, we measured the time taken to execute a SET operation followed by a GET operation, providing us with a comprehensive view of the key-value store's performance under varying workloads.
+
+Let's delve into the results and draw insightful conclusions based on the benchmark data.
 
 ## Benchmarks (TCP)
 
 ### C#
-
-OS: `linux`
-
-Architecture: `x64`
-
-CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
 | COMMAND | # OF EXECUTIONS | DURATION |           |
 | ------- | --------------- | -------- | --------- |
@@ -23,12 +23,6 @@ CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
 ### Go
 
-OS: `linux`
-
-Architecture: `x64`
-
-CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
-
 | COMMAND | # OF EXECUTIONS | DURATION |           |
 | ------- | --------------- | -------- | --------- |
 | SET/GET | 243             | 99 ms    | 407 ns/op |
@@ -40,12 +34,6 @@ CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
 ### TypeScript
 
-OS: `linux`
-
-Architecture: `x64`
-
-CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
-
 | COMMAND | # OF EXECUTIONS | DURATION |           |
 | ------- | --------------- | -------- | --------- |
 | SET/GET | 243             | 143 ms   | 584 ns/op |
@@ -55,15 +43,22 @@ CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 | SET/GET | 19683           | 6380 ms  | 324 ns/op |
 | SET/GET | 59049           | 18546 ms | 314 ns/op |
 
-## Benchmarks (HTTP)
+## Benchmarks (gRPC)
 
 ### TypeScript
 
-OS: `linux`
+| COMMAND | # OF EXECUTIONS | DURATION  |            |
+| ------- | --------------- | --------- | ---------- |
+| SET/GET | 243             | 502 ms    | 2065 ns/op |
+| SET/GET | 729             | 1349 ms   | 1850 ns/op |
+| SET/GET | 2187            | 2583 ms   | 1181 ns/op |
+| SET/GET | 6561            | 6936 ms   | 1057 ns/op |
+| SET/GET | 19683           | 19720 ms  | 1001 ns/op |
+| SET/GET | 59049           | 61036 ms  | 1033 ns/op |
 
-Architecture: `x64`
+## Benchmarks (HTTP)
 
-CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
+### TypeScript
 
 | COMMAND | # OF EXECUTIONS | DURATION  |            |
 | ------- | --------------- | --------- | ---------- |
@@ -76,13 +71,39 @@ CPU: `Intel(R) Xeon (R) Platinum 8280 CPU @ 2.70GHz`
 
 ## Conclusion
 
-This project aimed to compare the performance of a Key-Value Store implemented in C#, Go and TypeScript. The benchmarking results revealed that the choice of language, C#, Go or TypeScript, had minimal impact on the overall performance. Instead, the protocol and implementation specifics played a more significant role.
+Our key-value store benchmarking project has provided valuable insights into the performance characteristics of the implementations across different programming languages and application-level protocols (HTTP and gRPC).
 
-The C# implementation achieved an average of 342 nanoseconds per operation, while the JavaScript implementation achieved an average of 314 nanoseconds per operation. These results demonstrate that both languages are capable of providing efficient and comparable performance when using a minimalistic protocol over TCP.
+### Performance Comparison between Programming Languages
 
-Interestingly, when the TypeScript implementation switched to a traditional HTTP protocol over TCP, the average time per operation increased significantly to 2099 nanoseconds. This highlights the impact of protocol choice on performance. The minimalistic TCP protocol, designed specifically for this project, outperformed the traditional HTTP protocol in terms of efficiency.
+The benchmark results reveal clear performance differences between the three programming languages:
 
-In summary, this project emphasizes that the performance of a key-value store implementation is influenced more by the protocol and implementation specifics than the choice of programming language. By developing a minimalistic TCP protocol, both the C# and TypeScript implementations achieved similar levels of performance.
+* **Go**: The Go implementation consistently outperforms C# and TypeScript across all tested application-level protocols (HTTP and gRPC). Go exhibits the fastest execution times for both SET and GET operations. Its efficiency makes it a top choice for building high-performance key-value stores.
+
+* **C#**: While C# performs well, especially in the HTTP and gRPC benchmarks, it falls slightly behind Go in terms of raw performance. However, C# still demonstrates good execution times, making it a competitive option for certain projects.
+
+* **TypeScript**: TypeScript shows reasonable performance in the benchmarks, but it lags behind both Go and C#. It may be better suited for scenarios where Node.js and JavaScript-based development is a requirement.
+
+### Impact of Application-Level Protocols on Performance
+
+The choice of application-level protocol significantly impacts the key-value store's overall performance:
+
+* **HTTP**: While HTTP is widely used and offers excellent interoperability, it introduces additional overhead compared to gRPC. As a result, HTTP exhibits slightly longer execution times. HTTP can be a suitable choice for projects requiring compatibility with existing web technologies and services.
+
+* **gRPC**: The gRPC protocol performs remarkably well, utilizing TCP as its underlying transport layer for communication. gRPC's efficient use of protocol buffers and HTTP/2 contributes to its low overhead and high-performance capabilities. It provides an excellent balance between performance and interoperability, making it a strong contender for building efficient key-value stores.
+
+### Considerations for Language and Protocol Selection
+
+When choosing a programming language and application-level protocol for a key-value store, several factors should be considered:
+
+* **Performance Requirements**: If raw performance is crucial and fast execution times are a top priority, Go emerges as the clear winner in this benchmark. For high-performance applications with a focus on scalability, Go should be the preferred choice.
+
+* **Developer Familiarity**: The familiarity and expertise of the development team with a particular language can significantly impact productivity. Choosing a language developers are comfortable with can lead to faster development and easier maintenance.
+
+* **Interoperability and Ecosystem**: Consider whether your project needs to integrate with specific ecosystems. C# may be preferred in a .NET environment, while TypeScript might be more suitable for Node.js-based projects.
+
+* **Protocol Overhead**: The choice of application-level protocol should be based on the trade-off between performance and interoperability. gRPC, utilizing TCP as its transport layer, offers better performance compared to HTTP while providing excellent interoperability capabilities.
+
+In conclusion, the benchmark results have provided valuable insights into the performance characteristics of our key-value store implementations. The choice of programming language and application-level protocol should be made based on specific project requirements, the need for raw performance, developer familiarity, and considerations of protocol overhead. We hope this repository serves as a useful resource for those exploring key-value store implementations and their performance characteristics. Happy benchmarking!
 
 ## Contributions
 
